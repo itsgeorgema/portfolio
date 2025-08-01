@@ -19,6 +19,7 @@ export default function AnimatedTitle({
     'a traveler.',
     'a coffee lover.',
     'a foodie.',
+    'not performative.',
   ],
   typeSpeed = 80, // lower is faster
   deleteSpeed = 50, // lower is faster
@@ -65,11 +66,9 @@ export default function AnimatedTitle({
   }, [currentCharIndex, isTyping, currentTextIndex, texts, typeSpeed, deleteSpeed, pauseDuration]);
 
   return (
-    <div className={`block whitespace-nowrap relative ${className}`}>
-      <div className="absolute bottom-0 left-0 right-0">
-        {displayText}
-        <span className={`typewriter-cursor ${isActivelyTyping ? 'no-blink' : ''}`}></span>
-      </div>
-    </div>
+    <span className={`inline-block whitespace-normal lg:whitespace-nowrap ${className}`}>
+      {displayText}
+      <span className={`inline-block typewriter-cursor ${isActivelyTyping ? 'no-blink' : ''}`}></span>
+    </span>
   );
 } 

@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "George Ma",
+  title: "George Ma's Portfolio",
   description: "George Ma's personal website",
   openGraph: {
-    title: "George Ma",
-    description: "George Ma's personal website",
+    title: "George Ma's Portfolio",
+    description: "George Ma's Portfolio",
     url: "",
-    siteName: "George Ma",
+    siteName: "George Ma's Portfolio",
     images: [
       {
         url: "",

@@ -2,12 +2,11 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="flex justify-between items-center p-4 w-full">
-      <div className="text-2xl font-bold">George Ma</div>
-      <div className="flex gap-4 justify-end">
-        <Link href="/">Home</Link>
-        <Link href="/about">About</Link>
-      </div>
+    <div className="fixed top-10 right-15 z-50">
+      <nav className="flex gap-4 justify-end text-accent-white">
+        <Link href="/" className="hover:text-accent-cyan transition-colors duration-200">Home</Link>
+        <Link href="/about" className="hover:text-accent-cyan transition-colors duration-200">About</Link>
+      </nav>
     </div>
   );
 }
