@@ -17,7 +17,7 @@ export default function AnimatedTitle({
     'a snowboarder.',
     'a guitarist.',
     'a traveler.',
-    'a coffee lover.',
+    'a latte enthusiast.',
     'a foodie.',
     'not performative.',
   ],
