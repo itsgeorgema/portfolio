@@ -7,6 +7,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'orbitron': ['var(--font-orbitron)'],
+        'oxanium': ['var(--font-oxanium)'],
+      },
       colors: {
         nardo: {
           50: '#f8f9fa',

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Oxanium, Orbitron } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { nardoGrayColors } from "@/styles/colors";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const oxanium = Oxanium({
+  variable: "--font-oxanium",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
 });
 
@@ -48,7 +48,7 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-full`}
+        className={`${oxanium.variable} ${orbitron.variable} antialiased flex flex-col h-full`}
         style={{ backgroundColor: nardoGrayColors.primary[500] }}
       >
         <Navbar/>

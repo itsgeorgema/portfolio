@@ -43,8 +43,8 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-orbitron: var(--font-orbitron);
+  --font-oxanium: var(--font-oxanium);
   
   /* Nardo Gray Colors - Based on #92a6b0 */
   --color-nardo-50: #f8f9fa;
@@ -81,7 +81,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-orbitron);
 }
 
 /* Typewriter cursor styles - using cyan accent color */
@@ -106,4 +106,16 @@ body {
 .typewriter-cursor.no-blink {
   animation: none;
   opacity: 1;
+}
+
+.underline-animation {
+  @apply relative inline-block;
+}
+
+.underline-animation::after {
+  @apply absolute content-[''] w-full h-[5px] left-0 bottom-[-4px] bg-accent-cyan scale-x-0 origin-bottom-right transition-transform duration-300 ease-in-out;
+}
+
+.underline-animation:hover::after {
+  @apply scale-x-100 origin-bottom-left;
 }
