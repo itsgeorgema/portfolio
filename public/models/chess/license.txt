@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low-Poly Style Chess Set
+* source:	https://sketchfab.com/3d-models/low-poly-style-chess-set-782a25c27b3544439451ef065df34d77
+* author:	Hassan Sheikh (https://sketchfab.com/hassan24sk)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low-Poly Style Chess Set" (https://sketchfab.com/3d-models/low-poly-style-chess-set-782a25c27b3544439451ef065df34d77) by Hassan Sheikh (https://sketchfab.com/hassan24sk) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
