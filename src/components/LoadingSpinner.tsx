@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface LoadingSpinnerProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
@@ -37,13 +38,13 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       role="status"
     >
       {/* Center icon (static) */}
-      <img
+      <Image
         src="/spinner.svg"
         alt="App icon"
+        width={Math.round(containerSizePx * 0.55)}
+        height={Math.round(containerSizePx * 0.55)}
         className="pointer-events-none select-none"
         style={{
-          width: Math.round(containerSizePx * 0.55),
-          height: Math.round(containerSizePx * 0.55),
           objectFit: "contain",
         }}
       />

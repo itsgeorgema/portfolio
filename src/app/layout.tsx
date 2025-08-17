@@ -43,12 +43,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-screen">
+    <html lang="en" className="h-screen overflow-x-hidden">
       <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </head>
       <body
-        className={`${oxanium.variable} ${orbitron.variable} antialiased flex flex-col h-full`}
+        className={`${oxanium.variable} ${orbitron.variable} antialiased flex flex-col h-full overflow-x-hidden`}
         style={{ backgroundColor: nardoGrayColors.primary[500] }}
       >
         <Navbar/>

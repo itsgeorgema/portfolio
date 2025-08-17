@@ -1,8 +1,12 @@
 import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { nardoGrayColors } from "@/styles/colors";
 
 export default function Footer() {
   return (
-    <footer className="text-accent-white">
+    <footer 
+      className="text-accent-white" 
+      style={{ backgroundColor: nardoGrayColors.primary[500] }}
+    >
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-2 text-center text-sm">
           
