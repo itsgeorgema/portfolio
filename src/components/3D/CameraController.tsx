@@ -5,33 +5,40 @@ import * as THREE from 'three';
 
 interface CameraControllerProps {
   zoom: number;
+  onCameraPositionChange?: (position: THREE.Vector3, isInHeroZone: boolean) => void;
 }
 
-export default function CameraController({ zoom }: CameraControllerProps) {
+export default function CameraController({ zoom, onCameraPositionChange }: CameraControllerProps) {
   const { camera, gl } = useThree();
   const basePositionRef = useRef<THREE.Vector3>(new THREE.Vector3());
+  const defaultPositionRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const [panOffset, setPanOffset] = useState<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
   const [targetPanOffset, setTargetPanOffset] = useState<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
+  const [isInHeroZone, setIsInHeroZone] = useState(true);
+  const [cameraTransition, setCameraTransition] = useState(0); // 0 = hero mode, 1 = normal mode
   const isDragging = useRef(false);
   const previousMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
-    // Set up a lower camera angle - more flat to the xy plane
+    // Hero zone position: slight positive y, x=0, negative z (completely straight facing negative z)
+    const heroPosition = new THREE.Vector3(0, 5, -80);
+    
+    // Default/normal position: current setup
     const baseDistance = 30;
+    const angleY = Math.PI / 6; // 30 degrees
+    const angleXZ = Math.PI / 4;
     
-    // Lower angle - closer to the xy plane (reduced from 45 degrees)
-    const angleY = Math.PI / 6; // 30 degrees instead of 45
-    const angleXZ = Math.PI / 4; // Keep some perspective
-    
-    const basePosition = new THREE.Vector3(
-      baseDistance * Math.cos(angleXZ), // x
-      baseDistance * Math.sin(angleY),  // y - lower height
-      baseDistance * Math.sin(angleXZ)  // z
+    const defaultPosition = new THREE.Vector3(
+      baseDistance * Math.cos(angleXZ),
+      baseDistance * Math.sin(angleY),
+      baseDistance * Math.sin(angleXZ)
     );
     
-    basePositionRef.current.copy(basePosition);
-    camera.position.copy(basePosition);
-    camera.lookAt(0, 0, 0);
+    basePositionRef.current.copy(heroPosition);
+    defaultPositionRef.current.copy(defaultPosition);
+    camera.position.copy(heroPosition);
+    // Make camera look straight down the negative z axis with slight downward angle
+    camera.lookAt(0, 0, -100);
     camera.updateProjectionMatrix();
   }, [camera]);
 
@@ -109,19 +116,63 @@ export default function CameraController({ zoom }: CameraControllerProps) {
 
   useFrame((state, delta) => {
     // Smooth interpolation between current and target pan offset
-    const lerpFactor = 1 - Math.pow(0.01, delta); // Smooth damping
+    const lerpFactor = 1 - Math.pow(0.01, delta);
     panOffset.lerp(targetPanOffset, lerpFactor);
     setPanOffset(panOffset.clone());
     
-    // Calculate camera position: base position scaled by zoom, then add pan offset
-    const scaledBasePosition = basePositionRef.current.clone().multiplyScalar(zoom);
-    const finalPosition = scaledBasePosition.clone().add(panOffset);
+    // Calculate current camera position with pan offset (WITHOUT zoom for zone detection)
+    const currentPanPosition = basePositionRef.current.clone().add(panOffset);
+    
+    // Check if we're in the hero zone (negative z area, in front of models)
+    // Hero zone: z < -85 (sensitivity zone pushed to -85)
+    // Use unzoomed position for zone detection to prevent zoom from triggering transitions
+    const inHeroZone = currentPanPosition.z < -85;
+    
+    // Update hero zone state
+    if (inHeroZone !== isInHeroZone) {
+      setIsInHeroZone(inHeroZone);
+    }
+    
+    // Smooth transition between hero and normal camera modes
+    const targetTransition = inHeroZone ? 0 : 1;
+    const transitionSpeed = 2.0; // Speed of transition
+    const newTransition = THREE.MathUtils.lerp(cameraTransition, targetTransition, delta * transitionSpeed);
+    setCameraTransition(newTransition);
+    
+    // Interpolate between hero position and normal camera behavior
+    // Apply zoom ONLY to the final position calculation, not zone detection
+    let finalPosition: THREE.Vector3;
+    let lookAtTarget: THREE.Vector3;
+    
+    if (newTransition < 0.001) {
+      // Pure hero mode - look straight down negative z axis with no x offset
+      finalPosition = basePositionRef.current.clone().add(panOffset).multiplyScalar(zoom);
+      lookAtTarget = new THREE.Vector3(panOffset.x, panOffset.y, panOffset.z - 100); // Look straight ahead into negative z
+    } else if (newTransition > 0.999) {
+      // Pure normal mode
+      const scaledDefaultPosition = defaultPositionRef.current.clone().multiplyScalar(zoom);
+      finalPosition = scaledDefaultPosition.clone().add(panOffset);
+      lookAtTarget = panOffset.clone();
+    } else {
+      // Transitioning between modes
+      const heroPos = basePositionRef.current.clone().add(panOffset).multiplyScalar(zoom);
+      const normalPos = defaultPositionRef.current.clone().multiplyScalar(zoom).add(panOffset);
+      finalPosition = heroPos.lerp(normalPos, newTransition);
+      
+      // Interpolate look-at target from hero direction to center
+      const heroLookAt = new THREE.Vector3(panOffset.x, panOffset.y, panOffset.z - 100);
+      const normalLookAt = panOffset.clone();
+      lookAtTarget = heroLookAt.lerp(normalLookAt, newTransition);
+    }
     
     camera.position.copy(finalPosition);
-    
-    // Camera looks at center point adjusted by pan offset
-    const lookAtTarget = panOffset.clone();
     camera.lookAt(lookAtTarget);
+    
+    // Notify parent component about camera position changes
+    // Use the unzoomed position for consistency in UI feedback
+    if (onCameraPositionChange) {
+      onCameraPositionChange(currentPanPosition, inHeroZone);
+    }
   });
 
   return null;
