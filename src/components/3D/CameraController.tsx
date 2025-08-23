@@ -21,7 +21,7 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
 
   useEffect(() => {
     // Hero zone position: slight positive y, x=0, negative z (completely straight facing negative z)
-    const heroPosition = new THREE.Vector3(0, 5, -80);
+    const heroPosition = new THREE.Vector3(0, 5, -90);
     
     // Default/normal position: current setup
     const baseDistance = 30;

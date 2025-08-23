@@ -33,10 +33,8 @@ export default function Scene3D() {
   const handleCameraPositionChange = (position: THREE.Vector3, inHeroZone: boolean) => {
     setIsInHeroZone(inHeroZone);
     
-    // Calculate opacity based on distance from hero zone
-    // When z < -85, opacity = 1; when z > -75, opacity = 0; smooth transition between
-    const heroZoneDistance = Math.max(0, Math.min(1, (-position.z - 75) / 10));
-    setHeroOpacity(heroZoneDistance);
+    // Set opacity based on hero zone state: fade out when transitioning out of hero zone
+    setHeroOpacity(inHeroZone ? 1 : 0);
   };
 
   useEffect(() => {
@@ -86,7 +84,7 @@ export default function Scene3D() {
     <div ref={canvasRef} className="w-full h-screen relative" style={{ backgroundColor: nardoGray }}>
       <Canvas
         shadows={false}
-        camera={{ position: [0, 5, -80], fov: 45, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 5, -90], fov: 45, near: 0.1, far: 1000 }}
         gl={{ antialias: true, alpha: false }}
         className="w-full h-full"
         style={{ background: nardoGray }}
