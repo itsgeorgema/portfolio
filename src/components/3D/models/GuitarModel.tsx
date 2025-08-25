@@ -4,7 +4,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useMemo } from 'react';
 import { processSingleModel } from './ModelUtils';
 
-export default function GuitarModel({ position }: { position: [number, number, number] }) {
+import { Vec3Tuple } from '@/types/three';
+
+export default function GuitarModel({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/guitar.glb');
   
   const processedScene = useMemo(() => {

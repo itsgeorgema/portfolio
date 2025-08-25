@@ -1,6 +1,7 @@
 "use client";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Scene3D from "@/components/3D/Scene3D";
+import { PhysicsProvider } from "@/components/3D/PhysicsProvider";
 import ErrorBoundary from "@/components/3D/ErrorBoundary";
 import { useEffect, useState } from "react";
 
@@ -27,9 +28,11 @@ export default function Home() {
     <div className="relative">
       {/* 3D Scene Section with integrated hero */}
       <div className="relative">
-        <ErrorBoundary>
-          <Scene3D />
-        </ErrorBoundary>
+        <PhysicsProvider>
+          <ErrorBoundary>
+            <Scene3D />
+          </ErrorBoundary>
+        </PhysicsProvider>
       </div>
     </div>
   );

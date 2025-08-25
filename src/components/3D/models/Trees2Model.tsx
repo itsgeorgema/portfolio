@@ -5,7 +5,9 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { processIndividualObjects } from './ModelUtils';
 
-export default function Trees2Model({ position }: { position: [number, number, number] }) {
+import { Vec3Tuple } from '@/types/three';
+
+export default function Trees2Model({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/trees2.glb');
   
   const individualTrees = useMemo(() => {

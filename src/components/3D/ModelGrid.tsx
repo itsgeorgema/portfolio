@@ -3,7 +3,7 @@ import BarricadeSetModel from './models/BarricadeSetModel';
 import BowlingPinModel from './models/BowlingPinModel';
 import BowlingBallModel from './models/BowlingBallModel';
 import BrickModel from './models/BrickModel';
-import CarModel from './models/CarModel';
+import DrivableCar from './models/DrivableCar';
 import HumanModel from './models/HumanModel';
 import ChessModel from './models/ChessModel';
 import TrainModel from './models/TrainModel';
@@ -23,7 +23,7 @@ export default function ModelGrid() {
       <BrickModel position={[30, 0, -30]} />
       
       {/* Row 2 */}
-      <CarModel position={[-30, 0, -10]} />
+  <DrivableCar position={[0, 0, -50]} />
       <HumanModel position={[-10, 0, -10]} />
       <ChessModel position={[10, 0, -10]} />
       <TrainModel position={[30, 0, -10]} />

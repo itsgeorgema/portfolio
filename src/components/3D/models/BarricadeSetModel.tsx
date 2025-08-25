@@ -5,7 +5,9 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { processIndividualObjects } from './ModelUtils';
 
-export default function BarricadeSetModel({ position }: { position: [number, number, number] }) {
+import { Vec3Tuple } from '@/types/three';
+
+export default function BarricadeSetModel({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/barricade_set.glb');
   
   const individualBarricades = useMemo(() => {

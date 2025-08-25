@@ -41,22 +41,25 @@ export function processMaterials(object: THREE.Object3D) {
   });
 }
 
+// Core helper to uniformly scale a group to target max dimension and center it on XZ, placing base on Y=0
+export function scaleAndCenterGroup(group: THREE.Group, scaleTarget: number) {
+  const box = new THREE.Box3().setFromObject(group);
+  const size = box.getSize(new THREE.Vector3());
+  const maxDimension = Math.max(size.x, size.y, size.z);
+  if (maxDimension > 0) {
+    const scale = scaleTarget / maxDimension;
+    group.scale.setScalar(scale);
+    const center = box.getCenter(new THREE.Vector3());
+    center.multiplyScalar(scale);
+    group.position.set(-center.x, -box.min.y * scale, -center.z);
+  }
+}
+
 // Helper function for standard single-object model processing
 export function processSingleModel(scene: THREE.Group, scaleTarget: number = 8) {
   const clonedScene = scene.clone();
   processMaterials(clonedScene);
-  
-  const box = new THREE.Box3().setFromObject(clonedScene);
-  const size = box.getSize(new THREE.Vector3());
-  const maxDimension = Math.max(size.x, size.y, size.z);
-  
-  if (maxDimension > 0) {
-    const scale = scaleTarget / maxDimension;
-    clonedScene.scale.setScalar(scale);
-    const center = box.getCenter(new THREE.Vector3());
-    center.multiplyScalar(scale);
-    clonedScene.position.set(-center.x, -box.min.y * scale, -center.z);
-  }
+  scaleAndCenterGroup(clonedScene, scaleTarget);
   
   return clonedScene;
 }
@@ -79,20 +82,12 @@ export function processIndividualObjects(
   const fullBox = new THREE.Box3().setFromObject(clonedScene);
   const fullSize = fullBox.getSize(new THREE.Vector3());
   const maxDimension = Math.max(fullSize.x, fullSize.y, fullSize.z);
-  
   if (maxDimension > 0) {
     const scale = scaleTarget / maxDimension;
-    
-    // Apply same scaling to all object groups
-    objects.forEach(objectGroup => {
-      objectGroup.scale.setScalar(scale);
-    });
-    
-    // Position all objects to maintain their relative positions
     const center = fullBox.getCenter(new THREE.Vector3());
     center.multiplyScalar(scale);
-    
     objects.forEach(objectGroup => {
+      objectGroup.scale.setScalar(scale);
       objectGroup.position.set(-center.x, -fullBox.min.y * scale, -center.z);
     });
   }

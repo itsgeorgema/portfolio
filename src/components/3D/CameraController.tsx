@@ -2,6 +2,7 @@
 import { useThree, useFrame } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { getCarTarget, subscribeCarTarget, subscribeCarDriving } from './CarTrackingStore';
 
 interface CameraControllerProps {
   zoom: number;
@@ -15,15 +16,17 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
   const [panOffset, setPanOffset] = useState<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
   const [targetPanOffset, setTargetPanOffset] = useState<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
   const [isInHeroZone, setIsInHeroZone] = useState(true);
+  const isInHeroZoneRef = useRef(true);
   const [cameraTransition, setCameraTransition] = useState(0); // 0 = hero mode, 1 = normal mode
+  const [hasLeftHero, setHasLeftHero] = useState(false); // Track if car has ever left hero
   const isDragging = useRef(false);
   const previousMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const followEnabledRef = useRef(true); // follow car target
+  const lastKnownCarTarget = useRef<THREE.Vector3>(getCarTarget().clone());
 
   useEffect(() => {
-    // Hero zone position: slight positive y, x=0, negative z (completely straight facing negative z)
-    const heroPosition = new THREE.Vector3(0, 5, -90);
-    
-    // Default/normal position: current setup
+    // Hero zone position: camera positioned in front of car, facing negative Z to see car front
+    // Default/normal position (also used for hero; hero differs by zoom only)
     const baseDistance = 30;
     const angleY = Math.PI / 6; // 30 degrees
     const angleXZ = Math.PI / 4;
@@ -34,19 +37,39 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
       baseDistance * Math.sin(angleXZ)
     );
     
-    basePositionRef.current.copy(heroPosition);
+    // Use the same base position for hero and normal; only zoom will change
+    basePositionRef.current.copy(defaultPosition);
     defaultPositionRef.current.copy(defaultPosition);
-    camera.position.copy(heroPosition);
-    // Make camera look straight down the negative z axis with slight downward angle
-    camera.lookAt(0, 0, -100);
+    camera.position.copy(defaultPosition);
+    // Look at scene origin initially
+    camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   }, [camera]);
+
+  // Subscribe to car target updates
+  useEffect(() => {
+    const unsubTarget = subscribeCarTarget((pos) => {
+      lastKnownCarTarget.current = pos.clone();
+  // Always track car in hero; outside hero only when follow is enabled
+  if (isInHeroZoneRef.current || followEnabledRef.current) {
+        setTargetPanOffset(pos.clone());
+      }
+    });
+    const unsubDriving = subscribeCarDriving(() => {
+      // When driving toggles on, resume following
+      followEnabledRef.current = true;
+    });
+    return () => { unsubTarget(); unsubDriving(); };
+  }, []);
 
   useEffect(() => {
     const canvas = gl.domElement;
 
     const handleMouseDown = (event: MouseEvent) => {
+      // Disable dragging in hero zone
+      if (isInHeroZoneRef.current) return;
       isDragging.current = true;
+      followEnabledRef.current = false; // manual pan overrides follow temporarily
       previousMousePosition.current = { x: event.clientX, y: event.clientY };
       canvas.style.cursor = 'grabbing';
     };
@@ -78,27 +101,27 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
       const forwardMovement = cameraForward.clone().multiplyScalar(deltaY * panSpeed);
       
       // Combine the movements
-      const panDelta = new THREE.Vector3();
-      panDelta.add(rightMovement);
-      panDelta.add(forwardMovement);
+  const panDelta = new THREE.Vector3();
+  panDelta.add(rightMovement);
+  panDelta.add(forwardMovement);
 
-      setTargetPanOffset(prev => prev.clone().add(panDelta));
+  setTargetPanOffset(prev => prev.clone().add(panDelta));
       
       previousMousePosition.current = { x: event.clientX, y: event.clientY };
     };
 
     const handleMouseUp = () => {
       isDragging.current = false;
-      canvas.style.cursor = 'grab';
+  canvas.style.cursor = 'grab';
     };
 
     const handleMouseLeave = () => {
       isDragging.current = false;
-      canvas.style.cursor = 'grab';
+  canvas.style.cursor = 'grab';
     };
 
-    // Set initial cursor
-    canvas.style.cursor = 'grab';
+  // Set initial cursor
+  canvas.style.cursor = 'grab';
 
     // Add event listeners
     canvas.addEventListener('mousedown', handleMouseDown);
@@ -121,48 +144,48 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
     setPanOffset(panOffset.clone());
     
     // Calculate current camera position with pan offset (WITHOUT zoom for zone detection)
+    // In hero: always follow the car target; outside: follow only when enabled and not dragging
+    if (isInHeroZoneRef.current) {
+      followEnabledRef.current = true; // force follow in hero
+      setTargetPanOffset((prev) => prev.clone().lerp(lastKnownCarTarget.current, 0.35));
+    } else if (followEnabledRef.current && !isDragging.current) {
+      setTargetPanOffset((prev) => prev.clone().lerp(lastKnownCarTarget.current, 0.2));
+    }
+
     const currentPanPosition = basePositionRef.current.clone().add(panOffset);
     
-    // Check if we're in the hero zone (negative z area, in front of models)
-    // Hero zone: z < -85 (sensitivity zone pushed to -85)
-    // Use unzoomed position for zone detection to prevent zoom from triggering transitions
-    const inHeroZone = currentPanPosition.z < -85;
-    
-    // Update hero zone state
-    if (inHeroZone !== isInHeroZone) {
-      setIsInHeroZone(inHeroZone);
+    // Check if we're in the hero zone using CAR position, not camera position
+    const carPosition = lastKnownCarTarget.current;
+    const inHeroZone = carPosition.z < -45; // Tiny hero zone near new spawn (-30)
+
+    // Track if car has ever left hero (once left, stays in normal mode)
+    if (!inHeroZone && !hasLeftHero) {
+      setHasLeftHero(true);
     }
     
+    // Update hero zone state
+    if (inHeroZone !== isInHeroZone) setIsInHeroZone(inHeroZone);
+    isInHeroZoneRef.current = inHeroZone;
+    
     // Smooth transition between hero and normal camera modes
-    const targetTransition = inHeroZone ? 0 : 1;
+      // 0 in hero (zoomed in), 1 in normal (user zoom)
+      const targetTransition = inHeroZone ? 0 : 1;
     const transitionSpeed = 2.0; // Speed of transition
     const newTransition = THREE.MathUtils.lerp(cameraTransition, targetTransition, delta * transitionSpeed);
     setCameraTransition(newTransition);
     
-    // Interpolate between hero position and normal camera behavior
-    // Apply zoom ONLY to the final position calculation, not zone detection
-    let finalPosition: THREE.Vector3;
-    let lookAtTarget: THREE.Vector3;
+      // Keep the same angle/position in hero and normal; only zoom will change
+      const finalPosition = defaultPositionRef.current.clone().add(panOffset);
+      const lookAtTarget = panOffset.clone();
     
-    if (newTransition < 0.001) {
-      // Pure hero mode - look straight down negative z axis with no x offset
-      finalPosition = basePositionRef.current.clone().add(panOffset).multiplyScalar(zoom);
-      lookAtTarget = new THREE.Vector3(panOffset.x, panOffset.y, panOffset.z - 100); // Look straight ahead into negative z
-    } else if (newTransition > 0.999) {
-      // Pure normal mode
-      const scaledDefaultPosition = defaultPositionRef.current.clone().multiplyScalar(zoom);
-      finalPosition = scaledDefaultPosition.clone().add(panOffset);
-      lookAtTarget = panOffset.clone();
-    } else {
-      // Transitioning between modes
-      const heroPos = basePositionRef.current.clone().add(panOffset).multiplyScalar(zoom);
-      const normalPos = defaultPositionRef.current.clone().multiplyScalar(zoom).add(panOffset);
-      finalPosition = heroPos.lerp(normalPos, newTransition);
-      
-      // Interpolate look-at target from hero direction to center
-      const heroLookAt = new THREE.Vector3(panOffset.x, panOffset.y, panOffset.z - 100);
-      const normalLookAt = panOffset.clone();
-      lookAtTarget = heroLookAt.lerp(normalLookAt, newTransition);
+      // Zoom-only transition: lerp FOV between a tight hero FOV and the normal user FOV
+      const baseFOV = 45;
+      const normalFOV = THREE.MathUtils.clamp(baseFOV / zoom, 2, 120);
+      const heroFOV = 7; 
+      const blendedFOV = THREE.MathUtils.lerp(heroFOV, normalFOV, newTransition);
+    if (camera instanceof THREE.PerspectiveCamera) {
+        camera.fov = blendedFOV;
+      camera.updateProjectionMatrix();
     }
     
     camera.position.copy(finalPosition);
@@ -170,9 +193,7 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
     
     // Notify parent component about camera position changes
     // Use the unzoomed position for consistency in UI feedback
-    if (onCameraPositionChange) {
-      onCameraPositionChange(currentPanPosition, inHeroZone);
-    }
+  if (onCameraPositionChange) onCameraPositionChange(currentPanPosition, inHeroZone);
   });
 
   return null;

@@ -3,8 +3,9 @@ import { useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useMemo } from 'react';
 import { processSingleModel } from './ModelUtils';
+import { Vec3Tuple } from '@/types/three';
 
-export default function HumanModel({ position }: { position: [number, number, number] }) {
+export default function HumanModel({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/human.glb');
   
   const processedScene = useMemo(() => {

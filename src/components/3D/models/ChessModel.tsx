@@ -4,8 +4,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useMemo } from 'react';
 import * as THREE from 'three';
 import { processMaterials } from './ModelUtils';
+import { Vec3Tuple } from '@/types/three';
 
-export default function ChessModel({ position }: { position: [number, number, number] }) {
+export default function ChessModel({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/chess.glb');
   
   const individualChessPieces = useMemo(() => {
@@ -67,25 +68,17 @@ export default function ChessModel({ position }: { position: [number, number, nu
       processMaterials(pieceGroup);
     });
     
-    // Calculate scaling based on the full scene
+    // Use a small target for chess to avoid oversizing and ensure consistent centering
+    const scaleTarget = 0.1;
     const fullBox = new THREE.Box3().setFromObject(clonedScene);
     const fullSize = fullBox.getSize(new THREE.Vector3());
     const maxDimension = Math.max(fullSize.x, fullSize.y, fullSize.z);
-    
     if (maxDimension > 0) {
-      // Use an extremely small scale for chess to prevent oversizing
-      const scale = 0.1 / maxDimension;
-      
-      // Apply same scaling to all chess piece groups
-      chessPieces.forEach(pieceGroup => {
-        pieceGroup.scale.setScalar(scale);
-      });
-      
-      // Position all chess pieces to maintain their relative positions
+      const scale = scaleTarget / maxDimension;
       const center = fullBox.getCenter(new THREE.Vector3());
       center.multiplyScalar(scale);
-      
       chessPieces.forEach(pieceGroup => {
+        pieceGroup.scale.setScalar(scale);
         pieceGroup.position.set(-center.x, -fullBox.min.y * scale, -center.z);
       });
     }

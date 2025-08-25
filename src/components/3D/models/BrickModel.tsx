@@ -4,7 +4,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { useMemo } from 'react';
 import { processSingleModel } from './ModelUtils';
 
-export default function BrickModel({ position }: { position: [number, number, number] }) {
+import { Vec3Tuple } from '@/types/three';
+
+export default function BrickModel({ position }: { position: Vec3Tuple }) {
   const gltf = useLoader(GLTFLoader, '/models/brick.glb');
   
   const processedScene = useMemo(() => {
