@@ -4,7 +4,8 @@ import * as THREE from 'three';
 type TargetListener = (pos: THREE.Vector3) => void;
 type BoolListener = (val: boolean) => void;
 
-const carTarget = new THREE.Vector3(0, 0, -100);
+// Initialize to the car's reset/default position (matches ModelGrid and DrivableCar)
+const carTarget = new THREE.Vector3(0, 4, -50);
 let isDriving = false;
 
 const targetListeners = new Set<TargetListener>();

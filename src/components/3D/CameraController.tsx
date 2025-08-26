@@ -41,8 +41,16 @@ export default function CameraController({ zoom, onCameraPositionChange }: Camer
     basePositionRef.current.copy(defaultPosition);
     defaultPositionRef.current.copy(defaultPosition);
     camera.position.copy(defaultPosition);
-    // Look at scene origin initially
-    camera.lookAt(0, 0, 0);
+
+    // Initialize centered on the car's default/reset position
+    const initialTarget = lastKnownCarTarget.current;
+    setPanOffset(initialTarget.clone());
+    setTargetPanOffset(initialTarget.clone());
+    // Start with hero FOV since we begin in the hero zone
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.fov = 7;
+    }
+    camera.lookAt(initialTarget);
     camera.updateProjectionMatrix();
   }, [camera]);
 

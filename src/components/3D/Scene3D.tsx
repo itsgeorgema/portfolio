@@ -98,7 +98,7 @@ export default function Scene3D() {
     <div ref={canvasRef} className="w-full h-screen relative" style={{ backgroundColor: nardoGray }}>
       <Canvas
         shadows={false}
-        camera={{ position: [0, 5, -90], fov: 45, near: 0.1, far: 1000 }}
+        camera={{ position: [21.213203435596427, 19, -28.786796564403573], fov: 7, near: 0.1, far: 1000 }}
         gl={{ antialias: true, alpha: false }}
         className="w-full h-full"
         style={{ background: nardoGray }}
