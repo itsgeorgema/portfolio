@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Oxanium, Orbitron } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { ModalProvider } from "@/components/ModalContext";
 import { nardoGrayColors } from "@/styles/colors";
 
 const oxanium = Oxanium({
@@ -50,10 +51,12 @@ export default function RootLayout({
         className={`${oxanium.variable} ${orbitron.variable} antialiased flex flex-col h-full overflow-x-hidden`}
         style={{ backgroundColor: nardoGrayColors.primary[500] }}
       >
-        <Navbar/>
-        <main className="flex-1">
-          {children}
-        </main>
+        <ModalProvider>
+          <Navbar/>
+          <main className="flex-1">
+            {children}
+          </main>
+        </ModalProvider>
       </body>
     </html>
   );

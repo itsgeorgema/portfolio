@@ -3,24 +3,24 @@
 export default function Lighting() {
   return (
     <>
-      {/* Balanced ambient light to preserve texture colors */}
+      {/* Much higher ambient light for very light overall shading */}
       <ambientLight
-        intensity={0.5}
+        intensity={1.2}
         color="#ffffff"
       />
       
-      {/* Main directional light for proper shading */}
+      {/* Further reduced main directional light for very soft shadows */}
       <directionalLight
         position={[10, 15, 10]}
-        intensity={0.7}
+        intensity={0.3}
         color="#ffffff"
         castShadow={false}
       />
       
-      {/* Fill light to prevent harsh shadows */}
+      {/* Higher fill light to create very even illumination */}
       <directionalLight
         position={[-5, 10, -5]}
-        intensity={0.3}
+        intensity={0.7}
         color="#ffffff"
         castShadow={false}
       />

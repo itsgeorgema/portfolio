@@ -1,0 +1,67 @@
+"use client";
+import { useEffect, useState } from "react";
+import { nardoGrayColors } from "@/styles/colors";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children?: React.ReactNode;
+}
+
+export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      onClose();
+    }, 400); // Increased to match longer transition duration
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop - blurred/faded overlay */}
+      <div 
+        className="absolute inset-0 backdrop-blur-sm bg-black/50 transition-all duration-500 ease-out"
+        onClick={handleClose}
+      />
+      
+      {/* Modal */}
+      <div 
+        className={`relative bg-[${nardoGrayColors.primary[500]}] rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-500 ease-out ${
+          isAnimating 
+            ? 'translate-y-0 opacity-100 scale-100' 
+            : 'translate-y-12 opacity-0 scale-95'
+        }`}
+        style={{ backgroundColor: nardoGrayColors.primary[500] }}
+      >
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-200 cursor-pointer"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-white mb-4 font-orbitron">
+          {title}
+        </h2>
+        
+        {/* Content */}
+        {children}
+      </div>
+    </div>
+  );
+}

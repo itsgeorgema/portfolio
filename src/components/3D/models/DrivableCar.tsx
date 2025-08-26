@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { usePhysics } from '../PhysicsProvider';
 import { setCarTarget, setCarDriving } from '../CarTrackingStore';
+import { addResetListener, removeResetListener } from '../CarResetStore';
 import { Vec3Tuple } from '@/types/three';
 
 interface DrivableCarProps {
@@ -197,6 +198,29 @@ export default function DrivableCar({ position }: DrivableCarProps) {
   // Add state to track if car has come to a stop via braking
   const [hasStoppedViaBraking, setHasStoppedViaBraking] = useState(false);
 
+  // Car reset function
+  const resetCar = () => {
+    const car = carRef.current;
+    if (!car) return;
+    
+    // Reset to initial hero position
+    car.chassisBody.position.set(initialPositionRef.current[0], initialPositionRef.current[1] + 4, initialPositionRef.current[2]);
+    car.chassisBody.quaternion.set(0, 0, 0, 1);
+    car.chassisBody.angularVelocity.set(0, 0, 0);
+    car.chassisBody.velocity.set(0, 0, 0);
+    // Re-enter settling: lock rotation so it drops straight
+    car.chassisBody.angularFactor.set(0, 0, 0);
+    isSettlingRef.current = true;
+    settleStartTimeRef.current = performance.now();
+    setHasStoppedViaBraking(false);
+  };
+
+  // Register reset listener
+  useEffect(() => {
+    addResetListener(resetCar);
+    return () => removeResetListener(resetCar);
+  }, []);
+
   // Apply controls
   useEffect(() => {
     const car = carRef.current;
@@ -208,16 +232,7 @@ export default function DrivableCar({ position }: DrivableCarProps) {
 
     // Reset car (back to hero section)
     if (keysPressed.includes('r')) {
-      // Reset to initial hero position
-      car.chassisBody.position.set(initialPositionRef.current[0], initialPositionRef.current[1] + 4, initialPositionRef.current[2]);
-      car.chassisBody.quaternion.set(0, 0, 0, 1);
-      car.chassisBody.angularVelocity.set(0, 0, 0);
-      car.chassisBody.velocity.set(0, 0, 0);
-      // Re-enter settling: lock rotation so it drops straight
-      car.chassisBody.angularFactor.set(0, 0, 0);
-      isSettlingRef.current = true;
-      settleStartTimeRef.current = performance.now();
-      setHasStoppedViaBraking(false);
+      resetCar();
       return;
     }
 
