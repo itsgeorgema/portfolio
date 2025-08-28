@@ -19,7 +19,7 @@
         "thumbnail": "/pokemon-generator.png",
         "github": "https://github.com/itsgeorgema/Pokemon-Generator",
         "demo": "https://www.youtube.com/watch?v=SFcy8QjVgsY",
-        "website": "https://original-pokemon-generator.fly.dev/",
+        "website": "https://original-pokemon-generator-project.fly.dev/",
         "languages": ["Python", "HTML", "CSS"],
         "frontend": ["HTML", "Tailwind CSS"],
         "backend": ["Flask","Gunicorn"],
@@ -49,7 +49,7 @@
     },
     "project5": {
         "name": "This Portfolio",
-        "description": "3D interactive portfolio website",
+        "description": "A Next.js and Three.js 3D interactive portfolio website",
         "thumbnail": "/portfolio.png",
         "github": "https://github.com/itsgeorgema/portfolio",
         "website": "https://georgema.vercel.app/",

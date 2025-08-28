@@ -137,3 +137,41 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
 }
+
+/* Visible scrollbar with transparent track (default and hover) */
+.scrollbar-default {
+  scrollbar-width: thin;              /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.5) transparent; /* thumb transparent-track */
+}
+
+/* Keep track transparent when hovering the scrollable container */
+.scrollbar-default:hover {
+  scrollbar-color: rgba(255,255,255,0.5) transparent;
+}
+
+.scrollbar-default::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-default::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.5);
+  border-radius: 8px;
+}
+
+/* Transparent track by default */
+.scrollbar-default::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Ensure transparency on hover states */
+.scrollbar-default:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-default::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+
+.scrollbar-default::-webkit-scrollbar:hover {
+  background: transparent;
+}

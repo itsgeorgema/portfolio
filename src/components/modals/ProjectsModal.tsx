@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Modal from "../Modal";
 import Image from "next/image";
-import { FaCode, FaGithub } from "react-icons/fa";
+import { FaCode, FaGithub, FaPlay } from "react-icons/fa";
 import projectsData from "../../../projects.json";
+import { nardoGrayColors } from "@/styles/colors";
 
 interface Project {
   name: string;
@@ -28,6 +29,7 @@ interface ProjectsModalProps {
 export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [view, setView] = useState<'grid' | 'project'>('grid');
+  const demoSectionRef = useRef<HTMLDivElement | null>(null);
 
   // Convert JSON data to array format
   const projects: Project[] = Object.values(projectsData);
@@ -47,6 +49,12 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
     setView('grid');
     setSelectedProject(null);
     onClose();
+  };
+
+  const handleScrollToDemo = () => {
+    if (demoSectionRef.current) {
+      demoSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const renderTechStack = (project: Project) => {
@@ -72,7 +80,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                 {section.data.map((item, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-accent-charcoal text-accent-white text-xs rounded-full"
+                    className="px-3 py-1 bg-nardo-600 text-accent-white text-xs rounded-full"
                   >
                     {item}
                   </span>
@@ -88,7 +96,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
 
   if (view === 'project' && selectedProject) {
     return (
-      <Modal isOpen={isOpen} onClose={handleClose} title={selectedProject.name}>
+      <Modal isOpen={isOpen} onClose={handleClose} title={selectedProject.name} backgroundColor={nardoGrayColors.accent.charcoal} titleClassName="text-accent-cyanLight">
         <div className="text-white flex flex-col h-full">
           {/* Back button */}
           <button
@@ -101,7 +109,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
           </button>
           
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide pb-[28px] -mb-[28px] space-y-6 mt-4 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-2 scrollbar-default space-y-6 mt-4 min-h-0">
 
           {/* Project thumbnail and description side by side */}
           <div className="flex gap-8 items-center justify-center">
@@ -123,13 +131,13 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
               </p>
               
               {/* Links */}
-              <div className="flex gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 {selectedProject.website && (
                   <a
                     href={selectedProject.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2 bg-accent-cyan text-white rounded-lg hover:bg-accent-cyanDark transition-colors duration-200 flex items-center gap-2"
+                    className="px-6 py-2 bg-accent-cyan text-white rounded-lg hover:bg-accent-cyanDark hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 shrink-0 whitespace-nowrap"
                   >
                     <FaCode className="w-4 h-4" />
                     Visit Website
@@ -140,11 +148,20 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                     href={selectedProject.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-accent-charcoal text-white rounded-lg hover:bg-accent-greyDark transition-colors duration-200 flex items-center gap-2"
+                    className="px-4 py-2 bg-nardo-600 text-white rounded-lg hover:bg-accent-greyDark hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 shrink-0 whitespace-nowrap"
                   >
                     <FaGithub className="w-5 h-5" />
                     View Code
                   </a>
+                )}
+                {selectedProject.demo && (
+                  <button
+                    onClick={handleScrollToDemo}
+                    className="px-4 py-2 bg-accent-white text-accent-charcoal rounded-lg hover:bg-accent-greyLight hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap"
+                  >
+                    <FaPlay className="w-4 h-4" />
+                    Watch Demo
+                  </button>
                 )}
               </div>
             </div>
@@ -157,7 +174,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
 
             {/* Demo video if available */}
             {selectedProject.demo && (
-              <div>
+              <div ref={demoSectionRef}>
                 <h4 className="text-sm font-semibold text-accent-cyanLight mb-2 uppercase tracking-wide">
                   Demo Video
                 </h4>
@@ -182,7 +199,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
       <div className="text-white flex flex-col h-full">
         {/* Projects Grid */}
         <div className="flex-1 pb-[28px] -mb-[28px] min-h-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-y-auto scrollbar-hide">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-y-auto scrollbar-default">
             {projects.map((project, index) => (
               <div
                 key={index}

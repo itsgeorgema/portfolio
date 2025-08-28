@@ -9,11 +9,11 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-center text-sm">
           
           <div className="flex justify-center gap-4">
-          <a target="_blank" href="https://www.linkedin.com/in/ggeorgema" className="text-accent-charcoal hover:text-accent-nardo-500">
-            <FaLinkedin className="text-2xl" />
+          <a target="_blank" href="https://www.linkedin.com/in/ggeorgema" className="text-accent-charcoal hover:text-accent-greyDark hover:scale-115 transition-all duration-250 ease-out">
+            <FaLinkedin className="text-3xl" />
           </a>
-          <a target="_blank" href="https://github.com/itsgeorgema" className="text-accent-charcoal">
-            <FaGithub className="text-2xl" />
+          <a target="_blank" href="https://github.com/itsgeorgema" className="text-accent-charcoal hover:text-accent-greyDark hover:scale-115 transition-all duration-250 ease-out">
+            <FaGithub className="text-3xl" />
           </a>
           </div>
           <p className="font-oxanium">&copy; {new Date().getFullYear()}, Made on lots of Red Bull.</p>

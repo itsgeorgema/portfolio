@@ -7,9 +7,11 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children?: React.ReactNode;
+  backgroundColor?: string;
+  titleClassName?: string;
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, backgroundColor, titleClassName }: ModalProps) {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -37,12 +39,12 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       
       {/* Modal */}
       <div 
-        className={`relative bg-[${nardoGrayColors.primary[500]}] rounded-lg shadow-2xl p-8 max-w-6xl w-full mx-4 h-[90vh] flex flex-col transform transition-all duration-500 ease-out ${
+        className={`relative rounded-lg shadow-2xl p-8 max-w-6xl w-full mx-4 h-[90vh] flex flex-col transform transition-all duration-500 ease-out ${
           isAnimating 
             ? 'translate-y-0 opacity-100 scale-100' 
             : 'translate-y-12 opacity-0 scale-95'
         }`}
-        style={{ backgroundColor: nardoGrayColors.primary[500] }}
+        style={{ backgroundColor: backgroundColor ?? nardoGrayColors.primary[500] }}
       >
         {/* Close button */}
         <button
@@ -55,7 +57,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
         </button>
         
         {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-4 font-orbitron text-center">
+        <h2 className={`text-2xl font-bold mb-4 font-orbitron text-center ${titleClassName ?? 'text-white'}`}>
           {title.toUpperCase()}
         </h2>
         
