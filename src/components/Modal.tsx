@@ -37,7 +37,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       
       {/* Modal */}
       <div 
-        className={`relative bg-[${nardoGrayColors.primary[500]}] rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-500 ease-out ${
+        className={`relative bg-[${nardoGrayColors.primary[500]}] rounded-lg shadow-2xl p-8 max-w-6xl w-full mx-4 h-[90vh] flex flex-col transform transition-all duration-500 ease-out ${
           isAnimating 
             ? 'translate-y-0 opacity-100 scale-100' 
             : 'translate-y-12 opacity-0 scale-95'
@@ -47,7 +47,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors duration-200 cursor-pointer"
+          className="absolute top-4 right-4 text-white hover:text-accent-cyanLight transition-colors duration-200 cursor-pointer"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -55,12 +55,14 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
         </button>
         
         {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-4 font-orbitron">
-          {title}
+        <h2 className="text-2xl font-bold text-white mb-4 font-orbitron text-center">
+          {title.toUpperCase()}
         </h2>
         
         {/* Content */}
-        {children}
+        <div className="flex-1 min-h-0">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-center text-sm">
           
           <div className="flex justify-center gap-4">
-          <a target="_blank" href="https://www.linkedin.com/in/ggeorgema" className="text-accent-charcoal">
+          <a target="_blank" href="https://www.linkedin.com/in/ggeorgema" className="text-accent-charcoal hover:text-accent-nardo-500">
             <FaLinkedin className="text-2xl" />
           </a>
           <a target="_blank" href="https://github.com/itsgeorgema" className="text-accent-charcoal">

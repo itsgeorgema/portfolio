@@ -1,0 +1,74 @@
+{
+    "project1": {
+        "name": "Spotify Mood Player",
+        "description": "A React app that uses OpenAI to categorize and play songs based on a user's selected mood through their Spotify account",
+        "thumbnail": "/spotify-mood-player.png",
+        "github": "https://github.com/itsgeorgema/spotify-mood-player",
+        "demo": "https://www.youtube.com/watch?v=Iloqfjgzkps",
+        "website": "https://spotify-mood-player.vercel.app/",
+        "languages": ["TypeScript", "Python", "CSS", "HTML"],
+        "frontend": ["React", "Tailwind CSS"],
+        "backend": ["Flask", "Gunicorn"],
+        "data": ["Supabase PostgreSQL"],
+        "tools": ["OpenAI API", "Spotify API", "Librosa", "ThreadPoolExecutor","Genius API", "iTunes Search API"],
+        "deployment": ["AWS", "Docker", "Vite"]
+    },
+    "project2": {
+        "name": "Pokemon Generator",
+        "description": "A Flask app that generates images, stats, and abilities for a Pokemon based on user defined attributes using a PyTorch Conditional GAN",
+        "thumbnail": "/pokemon-generator.png",
+        "github": "https://github.com/itsgeorgema/Pokemon-Generator",
+        "demo": "https://www.youtube.com/watch?v=SFcy8QjVgsY",
+        "website": "https://original-pokemon-generator.fly.dev/",
+        "languages": ["Python", "HTML", "CSS"],
+        "frontend": ["HTML", "Tailwind CSS"],
+        "backend": ["Flask","Gunicorn"],
+        "data": ["Supabase PostgreSQL", "SQLAlchemy ORM"],
+        "tools": ["PyTorch", "scikit-learn", "CUDA"],
+        "deployment": ["Docker", "Fly.io"]
+    }, 
+    "project3": {
+        "name": "UCSD Alpha Kappa Psi Website",
+        "description": "A Next.js website that serves as the official website for UCSD Alpha Kappa Psi",
+        "thumbnail": "/ucsd-akpsi-website.png",
+        "github": "https://github.com/itsgeorgema/ucsd-akpsi-website",
+        "website": "https://akpsiucsd.com/",
+        "languages": ["TypeScript", "CSS", "HTML"],
+        "frontend": ["React", "Tailwind CSS"],
+        "backend": ["Next.js", "Node.js"],
+        "data": ["Supabase PostgreSQL"],
+        "deployment": ["Vercel"]
+    },
+    "project4": {
+        "name": "Text-Based Adventure Game",
+        "description": "A museum heist adventure game inspired by Zork that allows users to play through the CLI",
+        "thumbnail": "/text-based-adventure-game.png",
+        "github": "https://github.com/itsgeorgema/text-based-adventure-game",
+        "demo": "https://www.youtube.com/watch?v=PNoRD2KLa6k",
+        "languages": ["Java"]
+    },
+    "project5": {
+        "name": "This Portfolio",
+        "description": "3D interactive portfolio website",
+        "thumbnail": "/portfolio.png",
+        "github": "https://github.com/itsgeorgema/portfolio",
+        "website": "https://georgema.vercel.app/",
+        "languages": ["TypeScript", "CSS", "HTML"],
+        "frontend": ["React", "Three.js", "Cannon.js", "Tailwind CSS"],
+        "backend": ["Next.js", "Node.js"],
+        "data": ["JSON"],
+        "tools": ["Blender", "Figma"],
+        "deployment": ["Vercel"]
+    },
+    "project6": {
+        "name": "NBA Draft Hub",
+        "description": "A React website that displays comprehensive data and stats on the 2025 NBA Draft Class",
+        "thumbnail": "/nba-draft-hub.png",
+        "github": "https://github.com/itsgeorgema/nba-draft-hub",
+        "website": "https://nba-draft-hub-six.vercel.app/",
+        "languages": ["TypeScript", "CSS", "HTML"],
+        "frontend": ["React"],
+        "data": ["JSON"],
+        "deployment": ["Vercel"]
+    }
+}
