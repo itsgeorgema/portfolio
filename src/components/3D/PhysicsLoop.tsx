@@ -7,6 +7,7 @@ export default function PhysicsLoop() {
   const { world } = usePhysics();
   const lastCallTimeRef = useRef<number | undefined>(undefined);
   const timeStep = 1 / 60; // 60 FPS
+  const maxSubSteps = 3; // Limit substeps to prevent performance issues
 
   useFrame(() => {
     const time = performance.now() / 1000; // seconds
@@ -14,7 +15,9 @@ export default function PhysicsLoop() {
       world.step(timeStep);
     } else {
       const dt = time - lastCallTimeRef.current;
-      world.step(timeStep, dt);
+      // Clamp delta time to prevent large jumps that cause instability
+      const clampedDt = Math.min(dt, timeStep * 4);
+      world.step(timeStep, clampedDt, maxSubSteps);
     }
     lastCallTimeRef.current = time;
   });

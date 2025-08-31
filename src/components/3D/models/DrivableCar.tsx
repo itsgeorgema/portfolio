@@ -26,6 +26,12 @@ export default function DrivableCar({ position }: DrivableCarProps) {
   // Settling state: lock rotation briefly so the car drops straight down
   const isSettlingRef = useRef(true);
   const settleStartTimeRef = useRef<number>(0);
+  // Simple post-settle brake application
+  const postSettleBrakeRef = useRef(false);
+  const postSettleBrakeStartRef = useRef<number>(0);
+  // Idle state to keep car perfectly still after settling
+  const isIdleRef = useRef(false);
+  const idleStartRef = useRef<number>(0);
 
     // Car configuration
   const chassisDimension = { x: 1.96, y: 1, z: 3.56 };
@@ -106,6 +112,10 @@ export default function DrivableCar({ position }: DrivableCarProps) {
     chassisBody.angularFactor.set(0, 0, 0);
     isSettlingRef.current = true;
     settleStartTimeRef.current = performance.now();
+    // Initialize post-settle brake state
+    postSettleBrakeRef.current = false;
+    // Initialize idle state
+    isIdleRef.current = false;
 
     // Create raycast vehicle
     const car = new CANNON.RaycastVehicle({
@@ -212,6 +222,10 @@ export default function DrivableCar({ position }: DrivableCarProps) {
     car.chassisBody.angularFactor.set(0, 0, 0);
     isSettlingRef.current = true;
     settleStartTimeRef.current = performance.now();
+    // Reset post-settle brake state
+    postSettleBrakeRef.current = false;
+    // Reset idle state
+    isIdleRef.current = false;
     setHasStoppedViaBraking(false);
   };
 
@@ -242,6 +256,15 @@ export default function DrivableCar({ position }: DrivableCarProps) {
 
     // Brake with reduced force when turning - this is the actual brake that stops the car
     if (keysPressed.includes('shift')) {
+      // Exit settling mode when user starts braking
+      if (isSettlingRef.current) {
+        car.chassisBody.angularFactor.set(1, 1, 1);
+        isSettlingRef.current = false;
+      }
+      // Cancel post-settle brake and idle when user brakes manually
+      postSettleBrakeRef.current = false;
+      isIdleRef.current = false;
+      
       const currentBrakeForce = isTurning ? brakeForce * 0.6 : brakeForce; // 40% reduction when turning
       car.setBrake(currentBrakeForce, 0);
       car.setBrake(currentBrakeForce, 1);
@@ -282,6 +305,14 @@ export default function DrivableCar({ position }: DrivableCarProps) {
     if (keysPressed.includes('w') || keysPressed.includes('arrowup')) {
       // Clear anti-creep state when starting to move
       setHasStoppedViaBraking(false);
+      // Exit settling mode when user starts driving
+      if (isSettlingRef.current) {
+        car.chassisBody.angularFactor.set(1, 1, 1);
+        isSettlingRef.current = false;
+      }
+      // Cancel post-settle brake and idle when user drives
+      postSettleBrakeRef.current = false;
+      isIdleRef.current = false;
       
       car.applyEngineForce(maxForce * -1, 0);
       car.applyEngineForce(maxForce * -1, 1);
@@ -291,6 +322,14 @@ export default function DrivableCar({ position }: DrivableCarProps) {
     } else if (keysPressed.includes('s') || keysPressed.includes('arrowdown')) {
       // Clear anti-creep state when starting to move
       setHasStoppedViaBraking(false);
+      // Exit settling mode when user starts driving
+      if (isSettlingRef.current) {
+        car.chassisBody.angularFactor.set(1, 1, 1);
+        isSettlingRef.current = false;
+      }
+      // Cancel post-settle brake and idle when user drives
+      postSettleBrakeRef.current = false;
+      isIdleRef.current = false;
       
       car.applyEngineForce(maxForce * 1, 0);
       car.applyEngineForce(maxForce * 1, 1);
@@ -317,27 +356,78 @@ export default function DrivableCar({ position }: DrivableCarProps) {
     // Only update visual position if physics body exists and is active
     if (car.chassisBody.world) {
       // Handle settling: keep the car perfectly upright and prevent rotation until it has landed
-    if (isSettlingRef.current) {
+      if (isSettlingRef.current) {
         const elapsed = (performance.now() - settleStartTimeRef.current) / 1000;
         const vy = car.chassisBody.velocity.y;
         // Criteria to end settling: small vertical speed for a few frames or timeout safeguard
         if (Math.abs(vy) < 0.1 && elapsed > 0.15 || elapsed > 2.0) {
           car.chassisBody.angularFactor.set(1, 1, 1); // restore full rotation
           isSettlingRef.current = false;
+          // Start post-settle brake timer (0.5 seconds delay, then 1 second of braking)
+          setTimeout(() => {
+            postSettleBrakeRef.current = true;
+            postSettleBrakeStartRef.current = performance.now();
+          }, 500);
         } else {
           // Enforce upright orientation while settling
-      // Preserve yaw only
-      const cq = car.chassisBody.quaternion;
-      const yaw = new THREE.Euler().setFromQuaternion(new THREE.Quaternion(cq.x, cq.y, cq.z, cq.w), 'YXZ').y;
-      const upright = new CANNON.Quaternion();
-      upright.setFromEuler(0, yaw, 0);
-      car.chassisBody.quaternion.copy(upright);
+          // Preserve yaw only
+          const cq = car.chassisBody.quaternion;
+          const yaw = new THREE.Euler().setFromQuaternion(new THREE.Quaternion(cq.x, cq.y, cq.z, cq.w), 'YXZ').y;
+          const upright = new CANNON.Quaternion();
+          upright.setFromEuler(0, yaw, 0);
+          car.chassisBody.quaternion.copy(upright);
           car.chassisBody.angularVelocity.set(0, car.chassisBody.angularVelocity.y, 0);
           // Light braking to avoid sliding while landing
           car.setBrake(5, 0);
           car.setBrake(5, 1);
           car.setBrake(5, 2);
           car.setBrake(5, 3);
+        }
+      }
+      
+      // Handle post-settle brake application - more aggressive approach
+      if (postSettleBrakeRef.current) {
+        const brakeElapsed = (performance.now() - postSettleBrakeStartRef.current) / 1000;
+        if (brakeElapsed < 1.0) {
+          // Apply strong brake and directly stop motion
+          car.setBrake(100, 0);
+          car.setBrake(100, 1);
+          car.setBrake(100, 2);
+          car.setBrake(100, 3);
+          
+          // Also directly stop any residual motion
+          const velocity = car.chassisBody.velocity;
+          const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+          if (speed > 0.01) {
+            car.chassisBody.velocity.set(0, 0, 0);
+            car.chassisBody.angularVelocity.set(0, 0, 0);
+          }
+        } else {
+          // End post-settle braking and enter idle state
+          postSettleBrakeRef.current = false;
+          isIdleRef.current = true;
+          idleStartRef.current = performance.now();
+          // Ensure car is completely stopped before entering idle
+          car.chassisBody.velocity.set(0, 0, 0);
+          car.chassisBody.angularVelocity.set(0, 0, 0);
+          car.setBrake(0, 0);
+          car.setBrake(0, 1);
+          car.setBrake(0, 2);
+          car.setBrake(0, 3);
+        }
+      }
+      
+      // Handle idle state - keep car perfectly still indefinitely
+      if (isIdleRef.current) {
+        const velocity = car.chassisBody.velocity;
+        const angularVelocity = car.chassisBody.angularVelocity;
+        const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+        const angularSpeed = Math.sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z);
+        
+        // Aggressively prevent any movement while idle
+        if (speed > 0.001 || angularSpeed > 0.001) {
+          car.chassisBody.velocity.set(0, 0, 0);
+          car.chassisBody.angularVelocity.set(0, 0, 0);
         }
       }
 
@@ -365,7 +455,8 @@ export default function DrivableCar({ position }: DrivableCarProps) {
                         keysPressed.includes('s') || keysPressed.includes('arrowdown');
         const isBraking = keysPressed.includes('shift');
         
-        if (!isMoving && !isBraking) {
+        // Only apply coasting logic if not in idle state
+        if (!isMoving && !isBraking && !isIdleRef.current) {
 
           const velocity = car.chassisBody.velocity;
           const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
@@ -451,6 +542,9 @@ export default function DrivableCar({ position }: DrivableCarProps) {
         car.chassisBody.angularFactor.set(0, 0, 0);
         isSettlingRef.current = true;
         settleStartTimeRef.current = performance.now();
+        // Reset post-settle brake and idle state
+        postSettleBrakeRef.current = false;
+        isIdleRef.current = false;
       }
 
       // Update chassis position
