@@ -11,6 +11,7 @@ interface SlideInFadeInProps {
   duration?: number;
   className?: string;
   once?: boolean;
+  threshold?: number;
 }
 
 export default function SlideInFadeIn({
@@ -21,6 +22,7 @@ export default function SlideInFadeIn({
   duration = 0.5,
   className = "",
   once = true,
+  threshold = 0.1,
 }: SlideInFadeInProps) {
   const getInitialPosition = () => {
     switch (direction) {
@@ -52,7 +54,7 @@ export default function SlideInFadeIn({
         x: 0, 
         y: 0 
       }}
-      viewport={{ once }}
+      viewport={{ once, amount: threshold }}
       transition={{ 
         duration, 
         delay,

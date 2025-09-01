@@ -10,7 +10,6 @@ interface SlideOutFadeOutProps {
   distance?: number;
   duration?: number;
   className?: string;
-  isVisible?: boolean;
 }
 
 export default function SlideOutFadeOut({
@@ -20,43 +19,32 @@ export default function SlideOutFadeOut({
   distance = 50,
   duration = 0.4,
   className = "",
-  isVisible = true,
 }: SlideOutFadeOutProps) {
-  const getExitPosition = () => {
-    switch (direction) {
+  const getAxisOffset = (dir: "left" | "right" | "up" | "down") => {
+    switch (dir) {
       case "left":
         return { x: -distance, y: 0 };
       case "right":
         return { x: distance, y: 0 };
       case "up":
-        return { x: 0, y: -distance };
-      case "down":
         return { x: 0, y: distance };
-      default:
+      case "down":
         return { x: 0, y: -distance };
+      default:
+        return { x: 0, y: distance };
     }
   };
 
-  const exitPosition = getExitPosition();
+  const initialOffset = getAxisOffset(direction);
+  const exitOffset = getAxisOffset(direction);
 
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 1, x: 0, y: 0 }}
-      animate={
-        isVisible
-          ? { opacity: 1, x: 0, y: 0 }
-          : { 
-              opacity: 0, 
-              x: exitPosition.x, 
-              y: exitPosition.y 
-            }
-      }
-      transition={{ 
-        duration, 
-        delay,
-        ease: "easeIn"
-      }}
+      initial={{ opacity: 0, x: initialOffset.x, y: initialOffset.y, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      exit={{ opacity: 0, x: exitOffset.x, y: exitOffset.y, scale: 0.95 }}
+      transition={{ duration, delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>

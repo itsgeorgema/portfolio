@@ -7,6 +7,7 @@ export default function BackButton({ onClick, className = "" }: BackButtonProps)
   return (
     <button
       onClick={onClick}
+      tabIndex={-1}
       className={`absolute top-4 left-4 flex items-center space-x-2 text-white hover:text-accent-cyanLight transition-colors duration-200 group cursor-pointer ${className}`}
     >
       <svg 

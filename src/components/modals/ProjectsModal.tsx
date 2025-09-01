@@ -7,6 +7,7 @@ import projectsData from "../../../projects.json";
 import BackButton from "../BackButton";
 import FolderGrid from "../FolderGrid";
 import FolderTransition from "../animations/FolderTransition";
+import LazyYouTube from "../LazyYouTube";
 
 interface Project {
   name: string;
@@ -183,6 +184,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                           href={selectedProject.website}
                           target="_blank"
                           rel="noopener noreferrer"
+                          tabIndex={-1}
                           className="px-6 py-2 bg-accent-cyan text-white rounded-lg hover:bg-accent-cyanDark hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 shrink-0 whitespace-nowrap"
                         >
                           <FaCode className="w-4 h-4" />
@@ -194,6 +196,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                           href={selectedProject.github}
                           target="_blank"
                           rel="noopener noreferrer"
+                          tabIndex={-1}
                           className="px-4 py-2 bg-nardo-700 text-white rounded-lg hover:bg-accent-greyDark hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 shrink-0 whitespace-nowrap"
                         >
                           <FaGithub className="w-5 h-5" />
@@ -203,6 +206,7 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                       {selectedProject.demo && (
                         <button
                           onClick={handleScrollToDemo}
+                          tabIndex={-1}
                           className="px-4 py-2 bg-accent-white text-accent-charcoal rounded-lg hover:bg-accent-greyLight hover:scale-115 transition-all duration-200 ease-out flex items-center gap-2 cursor-pointer shrink-0 whitespace-nowrap"
                         >
                           <FaPlay className="w-4 h-4" />
@@ -222,14 +226,11 @@ export default function ProjectsModal({ isOpen, onClose }: ProjectsModalProps) {
                     <h4 className="text-sm font-semibold text-accent-cyanLight mb-2 uppercase tracking-wide">
                       Demo Video
                     </h4>
-                    <div className="aspect-video w-full">
-                      <iframe
-                        src={selectedProject.demo.replace('watch?v=', 'embed/')}
-                        title={`${selectedProject.name} Demo`}
-                        className="w-full h-full rounded-lg"
-                        allowFullScreen
-                      />
-                    </div>
+                    <LazyYouTube
+                      videoUrl={selectedProject.demo}
+                      title={`${selectedProject.name} Demo`}
+                      delay={125}
+                    />
                   </div>
                 )}
               </div>
