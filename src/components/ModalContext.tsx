@@ -3,13 +3,13 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 interface ModalContextType {
   isAboutOpen: boolean;
-  isGalleryOpen: boolean;
+  isScrapbookOpen: boolean;
   isProjectsOpen: boolean;
   openAbout: () => void;
-  openGallery: () => void;
+  openScrapbook: () => void;
   openProjects: () => void;
   closeAbout: () => void;
-  closeGallery: () => void;
+  closeScrapbook: () => void;
   closeProjects: () => void;
   closeAll: () => void;
 }
@@ -18,20 +18,20 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isScrapbookOpen, setIsScrapbookOpen] = useState(false);
   const [isProjectsOpen, setIsProjectsOpen] = useState(false);
 
   const openAbout = () => setIsAboutOpen(true);
-  const openGallery = () => setIsGalleryOpen(true);
+  const openScrapbook = () => setIsScrapbookOpen(true);
   const openProjects = () => setIsProjectsOpen(true);
 
   const closeAbout = () => setIsAboutOpen(false);
-  const closeGallery = () => setIsGalleryOpen(false);
+  const closeScrapbook = () => setIsScrapbookOpen(false);
   const closeProjects = () => setIsProjectsOpen(false);
 
   const closeAll = () => {
     setIsAboutOpen(false);
-    setIsGalleryOpen(false);
+    setIsScrapbookOpen(false);
     setIsProjectsOpen(false);
   };
 
@@ -39,13 +39,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider
       value={{
         isAboutOpen,
-        isGalleryOpen,
+        isScrapbookOpen,
         isProjectsOpen,
         openAbout,
-        openGallery,
+        openScrapbook,
         openProjects,
         closeAbout,
-        closeGallery,
+        closeScrapbook,
         closeProjects,
         closeAll,
       }}

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ModalProvider } from "@/components/ModalContext";
 import { nardoGrayColors } from "@/styles/colors";
+import { Analytics } from "@vercel/analytics/react";
 
 const oxanium = Oxanium({
   variable: "--font-oxanium",
@@ -57,6 +58,7 @@ export default function RootLayout({
             {children}
           </main>
         </ModalProvider>
+        <Analytics />
       </body>
     </html>
   );

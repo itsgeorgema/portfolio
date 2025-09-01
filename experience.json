@@ -1,0 +1,37 @@
+{
+    "experience1": {
+        "title": "Software Engineer Intern",
+        "company": "Praxie AI",
+        "url": "",
+        "date": "Apr. 2025 – Present",
+        "description": "Created reusable MVP React Native UI components for iOS and Android. Developed algorithms for searching, sorting, and saving tournaments. Optimized database structures by denormalizing fields.",
+        "highlights": [
+            "Created reusable MVP React Native UI components for iOS and Android",
+            "Developed algorithms for searching, sorting, and saving tournaments",
+            "Optimized database structures by denormalizing fields"
+        ]
+    },
+    "experience2": {
+        "title": "Webmaster/Lead Developer",
+        "company": "UCSD Alpha Kappa Psi",
+        "url": "https://akpsiucsd.com/",
+        "date": "Dec. 2024 – Present",
+        "description": "Developed a new chapter website using Next.js, Tailwind CSS, and Supabase. Led a team of 3 developers with a Github-driven agile workflow.",
+        "highlights": [
+            "Developed a new chapter website using Next.js, Tailwind CSS, and Supabase",
+            "Led a team of 3 developers with a Github-driven agile workflow"
+        ]
+    },
+    "experience3": {
+        "title": "Data Science Consultant",
+        "company": "DS3 @ UCSD",
+        "url": "",
+        "date": "Mar. 2025 – Jun. 2025",
+        "description": "Implemented a data processing pipeline for client datasets. Built a Streamlit dashboard for client data visualization. Forecasted participation with XGBoost, SARIMA, and Prophet with automated residual diagnostics.",
+        "highlights": [
+            "Implemented a data processing pipeline for client datasets",
+            "Built a Streamlit dashboard for client data visualization",
+            "Forecasted participation with XGBoost, SARIMA, and Prophet with automated residual diagnostics"
+        ]
+    }
+}

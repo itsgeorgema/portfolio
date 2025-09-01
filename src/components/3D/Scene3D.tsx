@@ -6,7 +6,7 @@ import CameraController from './CameraController';
 import Lighting from './Lighting';
 import Environment from './Environment';
 import Footer from '../Footer';
-import AnimatedTitle from '../AnimatedTitle';
+import AnimatedTitle from '../animations/AnimatedTitle';
 import PhysicsLoop from './PhysicsLoop';
 import PhysicsFloor from './PhysicsFloor';
 import CarControlsOverlay from './CarControlsOverlay';

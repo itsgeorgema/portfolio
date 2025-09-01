@@ -4,7 +4,7 @@ import { useModal } from "./ModalContext";
 import { triggerCarReset } from "./3D/CarResetStore";
 
 export default function Navbar() {
-  const { openAbout, openGallery, openProjects } = useModal();
+  const { openAbout, openScrapbook, openProjects } = useModal();
 
   // Prevent mouse interactions from moving focus to nav items
   const preventMouseFocus: React.MouseEventHandler<HTMLElement> = (event) => {
@@ -24,8 +24,8 @@ export default function Navbar() {
         <button onMouseDown={preventMouseFocus} onClick={openAbout}>
           <span className="underline-animation cursor-pointer">ABOUT</span>
         </button>
-        <button onMouseDown={preventMouseFocus} onClick={openGallery}>
-          <span className="underline-animation cursor-pointer">GALLERY</span>
+        <button onMouseDown={preventMouseFocus} onClick={openScrapbook}>
+          <span className="underline-animation cursor-pointer">SCRAPBOOK</span>
         </button>
         <button onMouseDown={preventMouseFocus} onClick={openProjects}>
           <span className="underline-animation cursor-pointer">PROJECTS</span>
