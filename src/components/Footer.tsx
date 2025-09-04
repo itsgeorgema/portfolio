@@ -16,7 +16,7 @@ export default function Footer() {
             <FaGithub className="text-3xl" />
           </a>
           </div>
-          <p className="font-oxanium">&copy; {new Date().getFullYear()}, Made on lots of Red Bull.</p>
+          <p className="font-oxanium">&copy; {new Date().getFullYear()} George Ma</p>
         </div>
       </div>
     </footer>

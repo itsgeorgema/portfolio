@@ -4,7 +4,6 @@ import Scene3D from "@/components/3D/Scene3D";
 import { PhysicsProvider } from "@/components/3D/PhysicsProvider";
 import ErrorBoundary from "@/components/3D/ErrorBoundary";
 import AboutModal from "@/components/modals/AboutModal";
-import ScrapbookModal from "@/components/modals/ScrapbookModal";
 import ProjectsModal from "@/components/modals/ProjectsModal";
 import { useModal } from "@/components/ModalContext";
 import { useEffect, useState } from "react";
@@ -14,10 +13,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const { 
     isAboutOpen, 
-    isScrapbookOpen, 
     isProjectsOpen, 
     closeAbout, 
-    closeScrapbook, 
     closeProjects 
   } = useModal();
 
@@ -53,7 +50,6 @@ export default function Home() {
 
       {/* Modals */}
       <AboutModal isOpen={isAboutOpen} onClose={closeAbout} />
-      <ScrapbookModal isOpen={isScrapbookOpen} onClose={closeScrapbook} />
       <ProjectsModal isOpen={isProjectsOpen} onClose={closeProjects} />
     </div>
   );
