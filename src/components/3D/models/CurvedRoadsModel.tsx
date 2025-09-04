@@ -14,21 +14,12 @@ export default function CurvedRoadsModel({ position }: { position: Vec3Tuple }) 
     const extractionLogic = (clonedScene: THREE.Group) => {
       const roads: THREE.Group[] = [];
       
-      // Navigate through the specific structure: root → GLTF_SceneRootNode → individual track objects
-      clonedScene.traverse((child) => {
-        if (child.name === 'root') {
-          child.children.forEach((sceneRoot) => {
-            if (sceneRoot.name === 'GLTF_SceneRootNode') {
-              sceneRoot.children.forEach((trackPiece) => {
-                // Each child should be an individual track piece (Track_Corner_90, Track_Fence_line, etc.)
-                const roadGroup = new THREE.Group();
-                const roadClone = trackPiece.clone();
-                roadGroup.add(roadClone);
-                roads.push(roadGroup);
-              });
-            }
-          });
-        }
+      // Load each individual object directly from the scene (no root structure)
+      clonedScene.children.forEach((roadObject) => {
+        const roadGroup = new THREE.Group();
+        const roadClone = roadObject.clone();
+        roadGroup.add(roadClone);
+        roads.push(roadGroup);
       });
       
       return roads;
@@ -37,12 +28,34 @@ export default function CurvedRoadsModel({ position }: { position: Vec3Tuple }) 
     return processIndividualObjects(gltf.scene, extractionLogic, 8);
   }, [gltf.scene]);
 
+  // Find the long_curve object
+  const longCurveObject = useMemo(() => {
+    return individualRoads.find(roadGroup => {
+      let foundLongCurve = false;
+      roadGroup.traverse((child) => {
+        if (child.name === 'long_curve') {
+          foundLongCurve = true;
+        }
+      });
+      return foundLongCurve;
+    });
+  }, [individualRoads]);
+
   return (
     <group position={position}>
       {/* Render each individual road piece */}
       {individualRoads.map((roadGroup, index) => (
         <primitive key={`road-${index}`} object={roadGroup} />
       ))}
+      
+      {/* Duplicate the long_curve object and place it at positive z relative to original */}
+      {longCurveObject && (
+        <primitive 
+          key="long-curve-duplicate" 
+          object={longCurveObject.clone()} 
+          position={[0, 0, 2]} // Place it 2 units in front (positive z) of the original
+        />
+      )}
     </group>
   );
 }

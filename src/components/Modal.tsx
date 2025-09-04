@@ -61,13 +61,8 @@ export default function Modal({ isOpen, onClose, title, children, backgroundColo
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
-              tabIndex={-1}
               ref={panelRef}
               className="relative rounded-lg shadow-2xl p-8 mx-4 h-[90vh] flex flex-col w-[72rem]"
-              onKeyDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
               style={{ backgroundColor: backgroundColor ?? nardoGrayColors.primary[600] }}
             >
             <CloseButton onClick={handleClose} />
