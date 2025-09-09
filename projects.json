@@ -50,7 +50,7 @@
 
     "project5":{
         "name": "Watchdog",
-        "description": "A robust, plug-and-play AI-powered CI/CD automation with multi-language support for Github PR reviews/comments, linting, formatting, and security checks via a self-hosteddockerized MCP server with Python (FastAPI) or Node.js (Express.js) runtime options",
+        "description": "A robust, plug-and-play AI-powered CI/CD automation with multi-language support for Github PR reviews/comments, linting, formatting, and security checks via a dockerized MCP server with Python (FastAPI) or Node.js (Express.js) runtime options hosted on AWS ECS with Fargate",
         "thumbnail": "/watchdog.png",
         "github": "https://github.com/itsgeorgema/watchdog",
         "languages": ["YAML", "Python", "Typescript", "XML"],
